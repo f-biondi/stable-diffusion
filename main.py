@@ -451,11 +451,13 @@ class CUDACallback(Callback):
             rank_zero_info(f"Average Epoch time: {epoch_time:.2f} seconds")
             rank_zero_info(f"Average Peak memory {max_memory:.2f}MiB")
             #deleting old checkpoints
+            """
             files = list(filter(os.path.isfile, glob.glob(os.path.join(self.ckptdir, "*"))))
             files.sort(key=lambda x: os.path.getmtime(x))
             if len(files) > 3:
                 print(f"Deleting {files[0]}")
                 os.remove(files[0])
+                """
 
         except AttributeError:
             pass
