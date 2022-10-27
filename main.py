@@ -427,6 +427,11 @@ class ImageLogger(Callback):
 
 
 class CUDACallback(Callback):
+
+    def __init__(self, ckptdir):
+        super().__init__()
+        self.ckptdir = ckptdir
+
     # see https://github.com/SeanNaren/minGPT/blob/master/mingpt/callback.py
     def on_train_epoch_start(self, trainer, pl_module):
         # Reset the memory use counter
@@ -445,6 +450,13 @@ class CUDACallback(Callback):
 
             rank_zero_info(f"Average Epoch time: {epoch_time:.2f} seconds")
             rank_zero_info(f"Average Peak memory {max_memory:.2f}MiB")
+            #deleting old checkpoints
+            files = list(filter(os.path.isfile, glob.glob(os.path.join(self.ckptdir, "*"))))
+            files.sort(key=lambda x: os.path.getmtime(x))
+            if len(files) > 3:
+                print(f"Deleting {files[0]}")
+                os.remove(files[0])
+
         except AttributeError:
             pass
 
@@ -786,6 +798,9 @@ if __name__ == "__main__":
             },
             "cuda_callback": {
                 "target": "main.CUDACallback"
+                "params": {
+                    "ckptdir": ckptdir,
+                }
             },
         }
         if version.parse(pl.__version__) >= version.parse('1.4.0'):
