@@ -797,7 +797,7 @@ if __name__ == "__main__":
                 }
             },
             "cuda_callback": {
-                "target": "main.CUDACallback"
+                "target": "main.CUDACallback",
                 "params": {
                     "ckptdir": ckptdir,
                 }
